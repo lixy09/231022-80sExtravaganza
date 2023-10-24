@@ -49,7 +49,6 @@ function addVideo() {
   }
 }
 
-
 /**
  * 3. create element of playlist and add to the div#"playlist"
  * @param {*} arr an array
@@ -118,26 +117,17 @@ function durationFormat(duration) {
   if (minute >= 60) {
     const minuteNew = minute % 60;
     const hour = (minute - minuteNew) / 60;
-    if (minuteNew < 10) {
-      if (second < 10) {
-        return `${hour}:0${minuteNew}:0${second}`;
-      } else {
-        return `${hour}:0${minuteNew}:${second}`;
-      }
-    } else {
-      if (second < 10) {
-        return `${hour}:${minuteNew}:0${second}`;
-      } else {
-        return `${hour}:${minuteNew}:${second}`;
-      }
-    }
+    return `${hour}:${addZero(minuteNew)}:${addZero(second)}`;
   } else {
-    if (second < 10) {
-      return `${minute}:0${second}`;
-    } else {
-      return `${minute}:${second}`;
-    }
+    return `${minute}:${addZero(second)}`;
   }
+}
+
+/**
+ * add zero ahead a time less than 10
+ */
+function addZero(time) {
+  return time = time.toString().padStart(2, '0');
 }
 
 /**
