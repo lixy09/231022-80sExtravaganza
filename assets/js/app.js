@@ -1,6 +1,3 @@
-// 1. insert new video
-// 2. total airtime
-
 // set variables to collect data
 const database = quirkyVideoDatabaseObject;
 const addButton = document.querySelector("#add-button");
@@ -24,13 +21,13 @@ function init() {
   addButton.addEventListener('click', addVideo);
 };
 
-// initialize new video object
-const newVideo = {};
 /**
  * 2. add video to the playlist by click button
  * KHA8quTeRoc
  */
 function addVideo() {
+  document.querySelector("#playlist").innerHTML = '';
+  const newVideo = {};
   newVideo.videoId = document.querySelector("#video-id").value;
   newVideo.duration = document.querySelector("#duration").value;
   newVideo.artist = document.querySelector("#artist").value;
@@ -45,8 +42,9 @@ function addVideo() {
     database.videos.sort(sortByTitle);
     // insert the new video to the playlist
     const newIndex = database.videos.map(i => i.videoId).indexOf(newVideo.videoId);
-    const playlistDom = document.querySelector("#playlist").children;
-    playlistDom.splice(newIndex, 0, createPlaylist(database.videos, newIndex));
+    for (let i = 0; i < database.videos.length; i++) {
+      createPlaylist(database.videos, i);
+    }
     clearInput();
   }
 }
