@@ -2,8 +2,6 @@
 const database = quirkyVideoDatabaseObject;
 const addButton = document.querySelector("#add-button");
 const airTime = document.querySelector("#airtime");
-// useless higher order function
-const newIndex = database.videos.map(i => i.videoId).indexOf(newVideo.videoId);
 
 window.addEventListener('load', init);
 /**
@@ -12,6 +10,7 @@ window.addEventListener('load', init);
  */
 function init() {
   let totalDuration = 0;
+  // sort database.videos
   database.videos.sort(sortByTitle);
   // create element of playlist and add to the div#"playlist"
   for (let i = 0; i < database.videos.length; i++) {
@@ -24,12 +23,11 @@ function init() {
 
 /**
  * 2. add video to the playlist by click button
+ * clear old playlist, add new video object and rewrite playlist
  * KHA8quTeRoc
  */
 function addVideo() {
-  // clear the old playlist
   document.querySelector("#playlist").innerHTML = '';
-  // create new video object
   const newVideo = {};
   newVideo.videoId = document.querySelector("#video-id").value;
   newVideo.duration = document.querySelector("#duration").value;
@@ -40,6 +38,8 @@ function addVideo() {
     database.videos.push(newVideo);
     init();
     clearInput();
+    // useless hight order function
+    const newIndex = database.videos.map(i => i.videoId).indexOf(newVideo.videoId);
   }
 }
 
