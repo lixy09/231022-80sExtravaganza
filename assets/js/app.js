@@ -2,6 +2,7 @@
 const database = quirkyVideoDatabaseObject;
 const addButton = document.querySelector("#add-button");
 const airTime = document.querySelector("#airtime");
+let totalDuration = 0;
 
 window.addEventListener('load', init);
 /**
@@ -9,9 +10,17 @@ window.addEventListener('load', init);
  * Initializes the app when the page is fully loaded.
  */
 function init() {
-  let totalDuration = 0;
   // sort database.videos
-  database.videos.sort(sortByTitle);
+  database.videos.sort(function(arrA, arrB){
+    const titleA = arrA.title.toLowerCase();
+    const titleB = arrB.title.toLowerCase();
+    if(titleA > titleB){
+      return 1;
+    }else if(titleA < titleB){
+      return -1;
+    }
+    return 0;
+  });
   // create element of playlist and add to the div#"playlist"
   for (let i = 0; i < database.videos.length; i++) {
     totalDuration += database.videos[i].duration;
@@ -36,6 +45,7 @@ function addVideo() {
   // check if the inputs suit conditions
   if (newVideo.videoId.length == 11 && newVideo.artist.length >= 3 && newVideo.title.length >= 3 && !isNaN(newVideo.duration)) {
     database.videos.push(newVideo);
+    totalDuration = 0;
     init();
     clearInput();
     // useless hight order function
@@ -116,22 +126,6 @@ function durationFormat(duration) {
  */
 function addZero(time) {
   return time = time.toString().padStart(2, '0');
-}
-
-/**
- * 5. Sort playlist by title
- * @param {*} arrA 
- * @param {*} arrB 
- * @returns 
- */
-function sortByTitle(arrA, arrB) {
-  if (arrA.title > arrB.title) {
-    return 1;
-  } else if (arrA.title < arrB.title) {
-    return -1;
-  } else {
-    return 0;
-  }
 }
 
 /**
