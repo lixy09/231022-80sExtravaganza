@@ -2,6 +2,8 @@
 const database = quirkyVideoDatabaseObject;
 const addButton = document.querySelector("#add-button");
 const airTime = document.querySelector("#airtime");
+// useless higher order function
+const newIndex = database.videos.map(i => i.videoId).indexOf(newVideo.videoId);
 
 window.addEventListener('load', init);
 /**
@@ -9,15 +11,14 @@ window.addEventListener('load', init);
  * Initializes the app when the page is fully loaded.
  */
 function init() {
-  // sort database.videos
+  let totalDuration = 0;
   database.videos.sort(sortByTitle);
   // create element of playlist and add to the div#"playlist"
   for (let i = 0; i < database.videos.length; i++) {
+    totalDuration += database.videos[i].duration;
     createPlaylist(database.videos, i);
   }
-  // add total airtime to the span#"airtime"
   airTime.innerHTML = durationFormat(totalDuration);
-  // add event listener to the ADD button
   addButton.addEventListener('click', addVideo);
 };
 
@@ -26,7 +27,9 @@ function init() {
  * KHA8quTeRoc
  */
 function addVideo() {
+  // clear the old playlist
   document.querySelector("#playlist").innerHTML = '';
+  // create new video object
   const newVideo = {};
   newVideo.videoId = document.querySelector("#video-id").value;
   newVideo.duration = document.querySelector("#duration").value;
@@ -34,17 +37,8 @@ function addVideo() {
   newVideo.title = document.querySelector("#title").value;
   // check if the inputs suit conditions
   if (newVideo.videoId.length == 11 && newVideo.artist.length >= 3 && newVideo.title.length >= 3 && !isNaN(newVideo.duration)) {
-    // update the total duration
-    totalDuration += newVideo.duration;
-    airTime.innerHTML = durationFormat(totalDuration);
-    // push new video into database
     database.videos.push(newVideo);
-    database.videos.sort(sortByTitle);
-    // insert the new video to the playlist
-    const newIndex = database.videos.map(i => i.videoId).indexOf(newVideo.videoId);
-    for (let i = 0; i < database.videos.length; i++) {
-      createPlaylist(database.videos, i);
-    }
+    init();
     clearInput();
   }
 }
@@ -98,12 +92,6 @@ function createPlaylist(arr, i) {
   durationSpan.className = "has-text-grey-light";
   durationSpan.innerHTML = durationFormat(arr[i].duration);
   mediaRight.appendChild(durationSpan);
-}
-
-// calculate total duration
-let totalDuration = 0;
-for (let i = 0; i < database.videos.length; i++) {
-  totalDuration += database.videos[i].duration;
 }
 
 /**
