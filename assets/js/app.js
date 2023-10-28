@@ -2,7 +2,6 @@
 const database = quirkyVideoDatabaseObject;
 const addButton = document.querySelector("#add-button");
 const airTime = document.querySelector("#airtime");
-let totalDuration = 0;
 
 window.addEventListener('load', init);
 /**
@@ -11,17 +10,9 @@ window.addEventListener('load', init);
  */
 function init() {
   // sort database.videos
-  database.videos.sort(function(arrA, arrB){
-    const titleA = arrA.title.toLowerCase();
-    const titleB = arrB.title.toLowerCase();
-    if(titleA > titleB){
-      return 1;
-    }else if(titleA < titleB){
-      return -1;
-    }
-    return 0;
-  });
+  database.videos.sort(sortByTitle);
   // create element of playlist and add to the div#"playlist"
+  let totalDuration = 0;
   for (let i = 0; i < database.videos.length; i++) {
     totalDuration += database.videos[i].duration;
     createPlaylist(database.videos, i);
@@ -45,11 +36,8 @@ function addVideo() {
   // check if the inputs suit conditions
   if (newVideo.videoId.length == 11 && newVideo.artist.length >= 3 && newVideo.title.length >= 3 && !isNaN(newVideo.duration)) {
     database.videos.push(newVideo);
-    totalDuration = 0;
     init();
     clearInput();
-    // useless hight order function
-    const newIndex = database.videos.map(i => i.videoId).indexOf(newVideo.videoId);
   }
 }
 
@@ -120,12 +108,29 @@ function durationFormat(duration) {
     return `${minute}:${addZero(second)}`;
   }
 }
-
 /**
  * add zero ahead a time less than 10
  */
 function addZero(time) {
   return time = time.toString().padStart(2, '0');
+}
+
+/**
+ * sort the object by title
+ * @param {*} arrA 
+ * @param {*} arrB 
+ * @returns 
+ */
+function sortByTitle(arrA, arrB){
+  const titleA = arrA.title.toUpperCase();
+  const titleB = arrB.title.toUpperCase();
+  if(titleA > titleB){
+    return 1;
+  }else if(titleA < titleB){
+    return -1;
+  }else{
+    return 0;
+  }
 }
 
 /**
