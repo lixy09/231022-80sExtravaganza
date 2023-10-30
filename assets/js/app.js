@@ -2,6 +2,7 @@
 const database = quirkyVideoDatabaseObject;
 const addButton = document.querySelector("#add-button");
 const airTime = document.querySelector("#airtime");
+const playList = document.querySelector("#playlist");
 
 window.addEventListener('load', init);
 /**
@@ -27,15 +28,11 @@ function init() {
  * KHA8quTeRoc
  */
 function addVideo() {
-  document.querySelector("#playlist").innerHTML = '';
-  const newVideo = {};
-  newVideo.videoId = document.querySelector("#video-id").value;
-  newVideo.duration = document.querySelector("#duration").value;
-  newVideo.artist = document.querySelector("#artist").value;
-  newVideo.title = document.querySelector("#title").value;
+  const newVideo = getInput();
   // check if the inputs suit conditions
   if (newVideo.videoId.length == 11 && newVideo.artist.length >= 3 && newVideo.title.length >= 3 && !isNaN(newVideo.duration)) {
     database.videos.push(newVideo);
+    playList.innerHTML = '';
     init();
     clearInput();
   }
@@ -47,18 +44,41 @@ function addVideo() {
  * @param {*} i an index
  */
 function createPlaylist(arr, i) {
+  const media = createMedia();
+  const mediaLeft = createMediaLeft(arr, i);
+  const mediaContent = createMediaContent(arr, i);
+  const mediaRight = createMediaRight(arr, i);
+  media.appendChild(mediaLeft);
+  media.appendChild(mediaContent);
+  media.appendChild(mediaRight);
+}
+
+/**
+ * 3.1 create media element
+ * @returns 
+ */
+function createMedia() {
   // <article class="card m-2 p-2">: media
   const playlistArticle = document.createElement("article");
   playlistArticle.className = "card m-2 p-2";
-  document.querySelector("#playlist").appendChild(playlistArticle);
+  playList.appendChild(playlistArticle);
   // <div class="media">: left, content, right
   const media = document.createElement("div");
   media.className = "media";
   playlistArticle.appendChild(media);
+  return media;
+}
+
+/**
+ * 3.2 create img element
+ * @param {*} arr 
+ * @param {*} i 
+ * @returns 
+ */
+function createMediaLeft(arr, i) {
   // <div class="media-left">
   const mediaLeft = document.createElement("div");
   mediaLeft.className = "media-left";
-  media.appendChild(mediaLeft);
   // <p class="image is-64x64">
   const img = document.createElement("p");
   img.className = "image is-64x64";
@@ -67,10 +87,19 @@ function createPlaylist(arr, i) {
   const imgSrc = document.createElement("img");
   imgSrc.setAttribute("src", `https://img.youtube.com/vi/${arr[i].videoId}/0.jpg`);
   img.appendChild(imgSrc);
+  return mediaLeft;
+}
+
+/**
+ * 3.3 create title element
+ * @param {*} arr 
+ * @param {*} i 
+ * @returns 
+ */
+function createMediaContent(arr, i) {
   // <div class="media-content"> 
   const mediaContent = document.createElement("div");
   mediaContent.className = "media-content";
-  media.appendChild(mediaContent);
   // <div class="content">
   const content = document.createElement("div");
   content.className = "content";
@@ -81,15 +110,25 @@ function createPlaylist(arr, i) {
   // <strong>Talking Heads</strong> - Road to Nowhere
   videoHref.innerHTML = `<strong>${arr[i].artist}</strong> - ${arr[i].title}`;
   content.appendChild(videoHref);
+  return mediaContent;
+}
+
+/**
+ * 3.4 create duration element
+ * @param {*} arr 
+ * @param {*} i 
+ * @returns 
+ */
+function createMediaRight(arr, i) {
   // <div class="media-right">
   const mediaRight = document.createElement("div");
   mediaRight.className = "media-right";
-  media.appendChild(mediaRight);
   // <span class="has-text-grey-light">
   const durationSpan = document.createElement("span");
   durationSpan.className = "has-text-grey-light";
   durationSpan.innerHTML = durationFormat(arr[i].duration);
   mediaRight.appendChild(durationSpan);
+  return mediaRight;
 }
 
 /**
@@ -109,26 +148,26 @@ function durationFormat(duration) {
   }
 }
 /**
- * add zero ahead a time less than 10
+ * 4.1 add zero ahead a time less than 10
  */
 function addZero(time) {
   return time = time.toString().padStart(2, '0');
 }
 
 /**
- * sort the object by title
+ * 5. sort the object by title
  * @param {*} arrA 
  * @param {*} arrB 
  * @returns 
  */
-function sortByTitle(arrA, arrB){
+function sortByTitle(arrA, arrB) {
   const titleA = arrA.title.toUpperCase();
   const titleB = arrB.title.toUpperCase();
-  if(titleA > titleB){
+  if (titleA > titleB) {
     return 1;
-  }else if(titleA < titleB){
+  } else if (titleA < titleB) {
     return -1;
-  }else{
+  } else {
     return 0;
   }
 }
@@ -141,4 +180,17 @@ function clearInput() {
   document.querySelector("#artist").value = '';
   document.querySelector("#title").value = '';
   document.querySelector("#duration").value = '';
+}
+
+/**
+ * 7. get user's input for the new video
+ * @returns a new video object
+ */
+function getInput() {
+  return {
+    videoId: document.querySelector("#video-id").value,
+    duration: document.querySelector("#duration").value,
+    artist: document.querySelector("#artist").value,
+    title: document.querySelector("#title").value
+  };
 }
