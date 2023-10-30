@@ -13,11 +13,8 @@ function init() {
   // sort database.videos
   database.videos.sort(sortByTitle);
   // create element of playlist and add to the div#"playlist"
-  let totalDuration = 0;
-  for (let i = 0; i < database.videos.length; i++) {
-    totalDuration += database.videos[i].duration;
-    createPlaylist(database.videos, i);
-  }
+  const totalDuration = database.videos.reduce((total, current) => total + current.duration, 0);
+  database.videos.forEach(createPlaylist);
   airTime.innerHTML = durationFormat(totalDuration);
   addButton.addEventListener('click', addVideo);
 };
@@ -43,11 +40,11 @@ function addVideo() {
  * @param {*} arr an array
  * @param {*} i an index
  */
-function createPlaylist(arr, i) {
+function createPlaylist(arr) {
   const media = createMedia();
-  const mediaLeft = createMediaLeft(arr, i);
-  const mediaContent = createMediaContent(arr, i);
-  const mediaRight = createMediaRight(arr, i);
+  const mediaLeft = createMediaLeft(arr);
+  const mediaContent = createMediaContent(arr);
+  const mediaRight = createMediaRight(arr);
   media.appendChild(mediaLeft);
   media.appendChild(mediaContent);
   media.appendChild(mediaRight);
@@ -72,10 +69,9 @@ function createMedia() {
 /**
  * 3.2 create img element
  * @param {*} arr 
- * @param {*} i 
  * @returns 
  */
-function createMediaLeft(arr, i) {
+function createMediaLeft(arr) {
   // <div class="media-left">
   const mediaLeft = document.createElement("div");
   mediaLeft.className = "media-left";
@@ -85,7 +81,7 @@ function createMediaLeft(arr, i) {
   mediaLeft.appendChild(img);
   // <img src="https://img.youtube.com/vi/LQiOA7euaYA/0.jpg">
   const imgSrc = document.createElement("img");
-  imgSrc.setAttribute("src", `https://img.youtube.com/vi/${arr[i].videoId}/0.jpg`);
+  imgSrc.setAttribute("src", `https://img.youtube.com/vi/${arr.videoId}/0.jpg`);
   img.appendChild(imgSrc);
   return mediaLeft;
 }
@@ -93,10 +89,9 @@ function createMediaLeft(arr, i) {
 /**
  * 3.3 create title element
  * @param {*} arr 
- * @param {*} i 
  * @returns 
  */
-function createMediaContent(arr, i) {
+function createMediaContent(arr) {
   // <div class="media-content"> 
   const mediaContent = document.createElement("div");
   mediaContent.className = "media-content";
@@ -106,9 +101,9 @@ function createMediaContent(arr, i) {
   mediaContent.appendChild(content);
   // <a href="https://youtu.be/LQiOA7euaYA">
   const videoHref = document.createElement("a");
-  videoHref.setAttribute("href", `https://youtu.be/${arr[i].videoId}`);
+  videoHref.setAttribute("href", `https://youtu.be/${arr.videoId}`);
   // <strong>Talking Heads</strong> - Road to Nowhere
-  videoHref.innerHTML = `<strong>${arr[i].artist}</strong> - ${arr[i].title}`;
+  videoHref.innerHTML = `<strong>${arr.artist}</strong> - ${arr.title}`;
   content.appendChild(videoHref);
   return mediaContent;
 }
@@ -116,17 +111,16 @@ function createMediaContent(arr, i) {
 /**
  * 3.4 create duration element
  * @param {*} arr 
- * @param {*} i 
  * @returns 
  */
-function createMediaRight(arr, i) {
+function createMediaRight(arr) {
   // <div class="media-right">
   const mediaRight = document.createElement("div");
   mediaRight.className = "media-right";
   // <span class="has-text-grey-light">
   const durationSpan = document.createElement("span");
   durationSpan.className = "has-text-grey-light";
-  durationSpan.innerHTML = durationFormat(arr[i].duration);
+  durationSpan.innerHTML = durationFormat(arr.duration);
   mediaRight.appendChild(durationSpan);
   return mediaRight;
 }
